@@ -1,0 +1,53 @@
+machines:
+  industrial_crusher:
+    supported_recipe_types: ["crushing"]
+    input_slots: [0]
+    output_slots: [1]
+    modifiers: 2.0
+    properties:
+      always_drop: true
+      fuel_required: false
+    progress_elements:
+      10: texture1
+      50: texture2
+      90: texture3
+
+  auto_sorter:
+    supported_recipe_types: ["sorting"]
+    input_slots: [0]
+    output_slots: [1, 2]
+    modifiers: 1.0
+    properties:
+      stop_on_full_buffer: true
+      allow_pushing: true
+      redstone_required: "on"
+      fuel_required: false
+      requires_permission: "datamachines.sorting"
+
+  chemical_mixer:
+    supported_recipe_types: ["mixing"]
+    input_slots: [0]
+    output_slots: [1]
+    fuel_slots: [2]
+    modifiers: 0.5
+    properties:
+      stop_on_full_buffer: true
+      allow_pushing: false
+      redstone_required: "disabled"
+      fuel_required: true
+
+  omni_assembler:
+    supported_recipe_types: ["smelting", "crushing", "mixing", "sorting"]
+    input_slots: [0]
+    output_slots: [1, 2]
+    modifiers:
+      per_type:
+        mixing: 5.0
+        smelting: 2.0
+        crushing: 2.0
+        sorting: 2.0
+    properties:
+      stop_on_full_buffer: false
+      allow_pushing: false
+      redstone_required: "off"
+      fuel_required: false
