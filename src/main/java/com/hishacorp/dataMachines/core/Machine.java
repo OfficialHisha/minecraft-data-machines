@@ -18,7 +18,7 @@ import java.util.List;
 public class Machine {
     private UUID uuid;
     private final Location location;
-    private final MachineType type;
+    private MachineType type;
     private PersistentDataContainer container;
 
     private Inventory inventory;
@@ -47,6 +47,10 @@ public class Machine {
 
     public MachineType getType() {
         return type;
+    }
+
+    public void setType(MachineType type) {
+        this.type = type;
     }
 
     public Inventory getInventory() {

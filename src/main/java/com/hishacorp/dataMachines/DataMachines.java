@@ -52,6 +52,11 @@ public final class DataMachines extends JavaPlugin {
         // Register testing command
         getCommand("dm").setExecutor((sender, command, label, args) -> {
             if (args.length == 3 && "give".equalsIgnoreCase(args[0])) {
+                if (!sender.hasPermission("datamachines.admin.give")) {
+                    sender.sendMessage("You do not have permission to give machines.");
+                    return true;
+                }
+
                 String machineId = args[1];
                 Player player = Bukkit.getPlayer(args[2]);
 
@@ -69,7 +74,16 @@ public final class DataMachines extends JavaPlugin {
                 return true;
             }
 
-            sender.sendMessage("Usage: /dm give <machine_id> <player>");
+            if (args.length == 1 && "reload".equalsIgnoreCase(args[0])) {
+                if (!sender.hasPermission("datamachines.admin.reload")) {
+                    sender.sendMessage("You do not have permission to reload configurations.");
+                    return true;
+                }
+                this.machineManager.reload();
+                sender.sendMessage("Configurations reloaded successfully!");
+                return true;
+            }
+            sender.sendMessage("Usage: /dm give <machine_id> <player> OR /dm reload");
             return true;
         });
     }

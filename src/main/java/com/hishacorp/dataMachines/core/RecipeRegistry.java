@@ -11,6 +11,10 @@ public class RecipeRegistry {
         recipes.put(recipe.id(), recipe);
     }
 
+    public void clear() {
+        recipes.clear();
+    }
+
     public Collection<Recipe> getAllRecipes() {
         return Collections.unmodifiableCollection(recipes.values());
     }

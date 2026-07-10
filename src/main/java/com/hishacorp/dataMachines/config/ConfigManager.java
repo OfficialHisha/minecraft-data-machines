@@ -23,6 +23,8 @@ public class ConfigManager {
     }
 
     public void load() {
+        recipes.clear();
+        machineTypes.clear();
         loadRecipes();
         loadMachines();
     }

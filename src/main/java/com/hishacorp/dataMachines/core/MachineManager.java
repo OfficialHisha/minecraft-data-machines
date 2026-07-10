@@ -1,6 +1,7 @@
 package com.hishacorp.dataMachines.core;
 
 import com.hishacorp.dataMachines.api.MachineType;
+import com.hishacorp.dataMachines.api.Recipe;
 import com.hishacorp.dataMachines.config.ConfigManager;
 import com.hishacorp.dataMachines.handlers.MachineHandler;
 import com.nexomc.nexo.utils.JsonBuilder;
@@ -40,6 +41,53 @@ public class MachineManager {
     public void registerHandler(String machineTypeId, MachineHandler<MachineType> handler) {
         log.info("Registered handler for {}", machineTypeId);
         handlers.put(machineTypeId, handler);
+    }
+
+    public void reload() {
+        log.info("Reloading machine and recipe configurations...");
+        
+        configManager.load();
+        
+        recipeRegistry.clear();
+        configManager.getRecipes().values().forEach(recipeRegistry::register);
+        
+        handlers.clear();
+        configManager.getMachineTypes().values().forEach(type -> 
+            registerHandler(type.id(), new com.hishacorp.dataMachines.handlers.BasicMachineHandler(this, new com.hishacorp.dataMachines.handlers.BasicRecipeHandler()))
+        );
+        
+        for (Machine machine : activeMachines.values()) {
+            String typeId = machine.getType().id();
+            MachineType newType = configManager.getMachineTypes().get(typeId);
+            if (newType != null) {
+                machine.setType(newType);
+            } else {
+                log.warn("Machine {} has type {} which is no longer in config", machine.getUuid(), typeId);
+            }
+            
+            // Update Active Recipe
+            Recipe currentRecipe = machine.getActiveRecipe();
+            if (currentRecipe != null) {
+                String recipeId = currentRecipe.id();
+                
+                // Try to find the updated recipe in the registry
+                Recipe updatedRecipe = recipeRegistry.getAllRecipes().stream()
+                        .filter(r -> r.id().equalsIgnoreCase(recipeId))
+                        .findFirst()
+                        .orElse(null);
+                
+                if (updatedRecipe != null) {
+                    // Always set the recipe to ensure the reference is updated to the latest config object
+                    machine.setActiveRecipe(updatedRecipe);
+                    log.debug("Updated recipe for machine {}: {}", machine.getUuid(), recipeId);
+                } else {
+                    log.warn("Machine {} has recipe {} which is no longer in config", machine.getUuid(), recipeId);
+                    machine.setActiveRecipe(null);
+                }
+            }
+        }
+        
+        log.info("Reload complete.");
     }
 
     public void addMachine(Machine machine) {

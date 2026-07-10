@@ -7,8 +7,9 @@ main: com.hishacorp.dataMachines.DataMachines
 api-version: '26.1.2'
 load: POSTWORLD
 
-authors: [ Hisha ]
+authors: [Hisha]
 
 commands:
   dm:
     description: DataMachines debug commands
+    permissions: datamachines.admin

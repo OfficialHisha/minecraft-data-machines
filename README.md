@@ -101,7 +101,8 @@ When a machine finishes processing a recipe, it follows these rules to determine
 
 ## TODO
 
-- Refactor to use Nexo custom blocks instead of furniture
+- Add a blocking item to all unused slots of a machine inventory that cannot be taken out by players.
+- Refactor to use Nexo custom blocks instead of furniture.
 
 ---
 
