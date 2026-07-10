@@ -25,6 +25,7 @@ The plugin translates configuration files into active Minecraft logic. Agents mu
 #### Data Model Specification
 - **Recipes (`recipes.yml`)**: Defined by a `type` which maps directly to a `Handler` implementation. Contains `inputs` (list of items/amounts), `outputs` (list of items/amounts/chance), and `processing_time` (ticks).
 - **Machines (`machines.yml`)**: Defines the physical and environmental behavior.
+    - `machine_name`: The title of the machine's inventory. Defaults to the machine ID.
     - `supported_recipe_types`: A list of recipe types this machine can process. **Required**
     - `input_slots`: A list of slots in the machine inventory that should be handled as input slots. **Required**
     - `output_slots`: A list of slots in the machine inventory that should be handled as output slots. **Required**

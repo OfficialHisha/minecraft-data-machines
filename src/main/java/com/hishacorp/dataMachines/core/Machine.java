@@ -30,7 +30,7 @@ public class Machine {
         this.location = location;
         this.type = type;
 
-        this.inventory = Bukkit.createInventory(new MachineInventoryHolder(this), 27, Component.text(type.id()));
+        this.inventory = Bukkit.createInventory(new MachineInventoryHolder(this), 27, Component.text(type.name()));
     }
 
     public record MachineInventoryHolder(Machine machine) implements InventoryHolder {

@@ -5,6 +5,7 @@ import java.util.Map;
 
 public record MachineType(
     String id,
+    String name,
     List<String> supportedRecipeTypes,
     List<Integer> inputSlots,
     List<Integer> outputSlots,

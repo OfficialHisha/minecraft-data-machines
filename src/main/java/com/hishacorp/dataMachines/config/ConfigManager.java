@@ -7,9 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ConfigManager {
     private final File recipesFile;
@@ -92,6 +90,7 @@ public class ConfigManager {
             ConfigurationSection machineSection = section.getConfigurationSection(id);
             if (machineSection == null) continue;
 
+            String name = machineSection.getString("machine_name", id);
             List<String> supportedRecipes = machineSection.getStringList("supported_recipe_types");
             List<Integer> inputSlots = machineSection.getIntegerList("input_slots");
             List<Integer> outputSlots = machineSection.getIntegerList("output_slots");
@@ -106,7 +105,7 @@ public class ConfigManager {
                 globalModifier = d;
             } else if (modifierObj instanceof Integer i) {
                 globalModifier = i.doubleValue();
-            } else if (modifierObj instanceof Map<?, ?> map) {
+            } else if (modifierObj instanceof Map<?, ?>) {
                 ConfigurationSection modSection = machineSection.getConfigurationSection("modifiers");
                 if (modSection != null) {
                     ConfigurationSection perTypeSection = modSection.getConfigurationSection("per_type");
@@ -143,7 +142,7 @@ public class ConfigManager {
                 propsSection.getString("requires_permission", null)
             );
 
-            machineTypes.put(id, new MachineType(id, supportedRecipes, inputSlots, outputSlots, fuelSlots, globalModifier, perTypeModifiers, progressTextures, properties));
+            machineTypes.put(id, new MachineType(id, name, supportedRecipes, inputSlots, outputSlots, fuelSlots, globalModifier, perTypeModifiers, progressTextures, properties));
         }
     }
 

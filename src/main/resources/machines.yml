@@ -1,5 +1,6 @@
 machines:
   industrial_crusher:
+    machine_name: "Industrial Crusher"
     supported_recipe_types: ["crushing"]
     input_slots: [0]
     output_slots: [1]
@@ -13,6 +14,7 @@ machines:
       90: texture3
 
   auto_sorter:
+    machine_name: "Auto Sorter"
     supported_recipe_types: ["sorting"]
     input_slots: [0]
     output_slots: [1, 2]
@@ -25,6 +27,7 @@ machines:
       requires_permission: "datamachines.sorting"
 
   chemical_mixer:
+    machine_name: "Chemical Mixer"
     supported_recipe_types: ["mixing"]
     input_slots: [0]
     output_slots: [1]
@@ -37,6 +40,7 @@ machines:
       fuel_required: true
 
   omni_assembler:
+    machine_name: "Omni Assembler"
     supported_recipe_types: ["smelting", "crushing", "mixing", "sorting"]
     input_slots: [0]
     output_slots: [1, 2]

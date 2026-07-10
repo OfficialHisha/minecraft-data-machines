@@ -52,6 +52,7 @@ Machines define the physical and environmental behavior of the machine.
 ```yaml
 machines:
   machine_id:
+    machine_name: "Machine Name" # The title of the machine's inventory
     supported_recipe_types: ["type1", "type2"] # List of recipe types this machine can process
     input_slots: [0] # Slots in the machine inventory that are used for inputs
     output_slots: [1, 2] # Slots in the machine inventory that are used for outputs
@@ -74,6 +75,7 @@ machines:
 ```yaml
 # Example of a complex machine
   auto_sorter:
+    machine_name: "Auto Sorter"
     supported_recipe_types: ["sorting"]
     input_slots: [0]
     output_slots: [1, 2]
