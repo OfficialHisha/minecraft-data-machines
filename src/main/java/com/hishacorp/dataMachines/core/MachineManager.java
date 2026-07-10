@@ -99,7 +99,6 @@ public class MachineManager {
         byte[] bytes = ItemStack.serializeItemsAsBytes(itemStacks);
 
         container.set(KEY_INVENTORY, PersistentDataType.BYTE_ARRAY, bytes);
-        log.info("Saved machine state to PDC...");
     }
 
     public void loadMachineFromContainer(Entity entity, PersistentDataContainer container) {
@@ -138,12 +137,12 @@ public class MachineManager {
         machine.getInventory().setContents(ItemStack.deserializeItemsFromBytes(inventoryBytes));
         machine.setRemainingTime(remainingTime);
         addMachine(machine);
-        log.info("Loaded machine {} of type {}", machine.getUuid(), typeId);
+        log.debug("Loaded machine {} of type {}", machine.getUuid(), typeId);
     }
 
     public void associateWithEntity(Machine machine, Entity entity) {
         machine.setContainer(entity.getPersistentDataContainer());
         saveMachine(machine);
-        log.info("Associated machine {} with entity {}", machine.getUuid(), entity.getEntityId());
+        log.debug("Associated machine {} with entity {}", machine.getUuid(), entity.getEntityId());
     }
 }

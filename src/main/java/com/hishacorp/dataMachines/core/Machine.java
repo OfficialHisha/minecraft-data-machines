@@ -6,8 +6,10 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -28,8 +30,16 @@ public class Machine {
         this.location = location;
         this.type = type;
 
-        this.inventory = Bukkit.createInventory(null, 27, Component.text(type.id()));
+        this.inventory = Bukkit.createInventory(new MachineInventoryHolder(this), 27, Component.text(type.id()));
     }
+
+    public record MachineInventoryHolder(Machine machine) implements InventoryHolder {
+
+        @Override
+            public @NotNull Inventory getInventory() {
+                return machine.getInventory();
+            }
+        }
 
     public Location getLocation() {
         return location;

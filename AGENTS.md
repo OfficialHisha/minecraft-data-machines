@@ -37,6 +37,7 @@ The plugin translates configuration files into active Minecraft logic. Agents mu
         - `allow_pushing`: Flag to chose if the machine will automatically push items from its internal buffer to adjacent inventories. Default: true (not used if `always_drop` is true)
         - `redstone_required`: Redstone state requirement (`on`, `off`, `disabled`). Default: `disabled`.
         - `fuel_required`: Boolean indicating if the machine consumes fuel. Default: false.
+        - `fuel_items`: A list of item IDs that are allowed in fuel slots. If empty/null, any item is accepted.
         - `requires_permission`: A string value indicating the permission required to use the machine, if none is set, no permission check will be performed.
     -  Machines should follow the following precedence rules for outputting processed items:
       -  If `always_drop` property is true, drop the produced item at the machine location.

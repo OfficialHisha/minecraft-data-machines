@@ -137,6 +137,7 @@ public class ConfigManager {
                 propsSection.getBoolean("allow_pushing", true),
                 propsSection.getString("redstone_required", "disabled"),
                 propsSection.getBoolean("fuel_required", false),
+                propsSection.getStringList("fuel_items"),
                 propsSection.getString("requires_permission", null)
             );
 

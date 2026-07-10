@@ -63,6 +63,7 @@ machines:
       allow_pushing: true # If true, machine tries to push items to adjacent inventories
       redstone_required: "disabled" # Redstone state: "on", "off", "disabled"
       fuel_required: false # (Optional) Whether the machine consumes fuel
+      fuel_items: ["coal", "charcoal"] # (Optional) List of items that can be used as fuel
       requires_permission: "permission.node" # (Optional) Permission required to use the machine
     progress_elements:
       10: texture1 # (Optional) Map of progress percentage -> texture to change block texture during processing
@@ -100,14 +101,11 @@ When a machine finishes processing a recipe, it follows these rules to determine
 
 ## TODO
 
-- Implement redstone signal detection
-- Implement fuel usage
-- Implement permission check
 - Refactor to use Nexo custom blocks instead of furniture
 
 ---
 
-## AI Usage Disclamer
+## AI Usage Disclaimer
 
 Generative AI is used in the development of this plugin. Only local models (on my PC) is used, no cloud models (AI Datacenters) will ever be used.
 

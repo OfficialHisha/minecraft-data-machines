@@ -31,8 +31,6 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         MachineType type = machine.getType();
 
         if (!canProcess(location, inventory, type)) {
-            machine.setActiveRecipe(null);
-            machine.setRemainingTime(0);
             return;
         }
 
@@ -46,18 +44,20 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
     private boolean canProcess(Location location, Inventory inventory, MachineType type) {
         // Redstone check
         String redstoneReq = type.properties().redstoneRequired();
-        if ("on".equalsIgnoreCase(redstoneReq)) {
-            // This is a simplification; in a real plugin we'd check the block state
-            // For now, let's assume it's always OK or implement a basic check
-        } else if ("off".equalsIgnoreCase(redstoneReq)) {
-            // Same here
+        boolean isPowered = location.getBlock().isBlockPowered();
+        if ("on".equalsIgnoreCase(redstoneReq) && !isPowered) {
+            return false;
+        } else if ("off".equalsIgnoreCase(redstoneReq) && isPowered) {
+            return false;
         }
 
         // Fuel check
         if (type.properties().fuelRequired()) {
             boolean hasFuel = false;
+            List<String> fuelItems = type.properties().fuelItems();
             for (int slot : type.fuelSlots()) {
-                if (inventory.getItem(slot) != null) {
+                ItemStack item = inventory.getItem(slot);
+                if (item != null && isFuelItem(item, fuelItems)) {
                     hasFuel = true;
                     break;
                 }
@@ -66,6 +66,18 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         }
 
         return true;
+    }
+
+    private boolean isFuelItem(ItemStack item, List<String> fuelItems) {
+        if (fuelItems == null || fuelItems.isEmpty()) {
+            return true; // If no specific fuel items are defined, any item counts as fuel
+        }
+        for (String fuelId : fuelItems) {
+            if (isItemMatch(item, fuelId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void tryStartNewRecipe(Machine machine) {
@@ -79,8 +91,26 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
 
             if (hasInputs(inventory, type, recipe)) {
                 consumeInputs(inventory, type, recipe);
+                if (type.properties().fuelRequired()) {
+                    consumeFuel(inventory, type);
+                }
                 machine.setActiveRecipe(recipe);
                 machine.setRemainingTime(recipe.processingTime());
+                return;
+            }
+        }
+    }
+
+    private void consumeFuel(Inventory inventory, MachineType type) {
+        List<String> fuelItems = type.properties().fuelItems();
+        for (int slot : type.fuelSlots()) {
+            ItemStack item = inventory.getItem(slot);
+            if (item != null && isFuelItem(item, fuelItems)) {
+                if (item.getAmount() > 1) {
+                    item.setAmount(item.getAmount() - 1);
+                } else {
+                    inventory.setItem(slot, null);
+                }
                 return;
             }
         }

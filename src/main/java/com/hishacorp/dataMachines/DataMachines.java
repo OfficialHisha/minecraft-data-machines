@@ -19,32 +19,32 @@ public final class DataMachines extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // 1. Setup Configs
+        // Setup Configs
         File recipesFile = new File(getDataFolder(), "recipes.yml");
         File machinesFile = new File(getDataFolder(), "machines.yml");
         
-        // Ensure files exist
+        // Ensure config files exist
         saveResource("recipes.yml", false);
         saveResource("machines.yml", false);
 
         ConfigManager configManager = new ConfigManager(recipesFile, machinesFile);
         configManager.load();
 
-        // 2. Setup Registry
+        // Setup Registry
         RecipeRegistry recipeRegistry = new RecipeRegistry();
         configManager.getRecipes().values().forEach(recipeRegistry::register);
 
-        // 3. Setup Manager
+        // Setup Manager
         this.machineManager = new MachineManager(configManager, recipeRegistry);
 
-        // 4. Register Handlers
+        // Register Handlers
         configManager.getMachineTypes().values().forEach(machineType -> this.machineManager.registerHandler(machineType.id(), new BasicMachineHandler(this.machineManager, new BasicRecipeHandler())));
 
-        // 5. Register Listeners
+        // Register Listeners
         this.getServer().getPluginManager().registerEvents(new NexoFurnitureListener(this.machineManager), this);
         this.getServer().getPluginManager().registerEvents(new ChunkListener(this, this.machineManager), this);
 
-        // 6. Start Tick Loop
+        // Start Tick Loop
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> this.machineManager.tick(), 10L, 10L);
 
         getLogger().info("DataMachines enabled successfully!");

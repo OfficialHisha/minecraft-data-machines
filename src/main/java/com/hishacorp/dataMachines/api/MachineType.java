@@ -20,6 +20,7 @@ public record MachineType(
         boolean allowPushing,
         String redstoneRequired,
         boolean fuelRequired,
+        List<String> fuelItems,
         String requiresPermission
     ) {}
 }

@@ -6,6 +6,7 @@ import com.nexomc.nexo.api.events.furniture.NexoFurnitureBreakEvent;
 import com.nexomc.nexo.api.events.furniture.NexoFurnitureInteractEvent;
 import com.nexomc.nexo.api.events.furniture.NexoFurniturePlaceEvent;
 import com.nexomc.nexo.mechanics.furniture.FurnitureMechanic;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -50,6 +51,16 @@ public class NexoFurnitureListener implements Listener {
         log.debug("onFurnitureInteract");
 
         Location loc = event.getBaseEntity().getLocation().getBlock().getLocation();
-        event.getPlayer().openInventory(machineManager.getMachine(loc).getInventory());
+        Machine machine = machineManager.getMachine(loc);
+        
+        if (machine == null) return;
+
+        String permission = machine.getType().properties().requiresPermission();
+        if (permission != null && !permission.isEmpty() && !event.getPlayer().hasPermission(permission)) {
+            event.getPlayer().sendMessage(Component.text("You are not able to use this machine."));
+            return;
+        }
+
+        event.getPlayer().openInventory(machine.getInventory());
     }
 }
