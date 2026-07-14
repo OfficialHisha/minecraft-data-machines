@@ -95,6 +95,7 @@ public class ConfigManager {
             List<Integer> inputSlots = machineSection.getIntegerList("input_slots");
             List<Integer> outputSlots = machineSection.getIntegerList("output_slots");
             List<Integer> fuelSlots = machineSection.getIntegerList("fuel_slots");
+            Integer progressSlot = machineSection.getInt("progress_slot");
             
             // Handle modifiers: can be a single number or a map
             Object modifierObj = machineSection.get("modifiers");
@@ -118,7 +119,7 @@ public class ConfigManager {
             }
 
             Map<Integer, String> progressTextures = new HashMap<>();
-            ConfigurationSection progressSection = machineSection.getConfigurationSection("progress_textures");
+            ConfigurationSection progressSection = machineSection.getConfigurationSection("progress_elements");
             if (progressSection != null) {
                 for (String key : progressSection.getKeys(false)) {
                     try {
@@ -142,7 +143,7 @@ public class ConfigManager {
                 propsSection.getString("requires_permission", null)
             );
 
-            machineTypes.put(id, new MachineType(id, name, supportedRecipes, inputSlots, outputSlots, fuelSlots, globalModifier, perTypeModifiers, progressTextures, properties));
+            machineTypes.put(id, new MachineType(id, name, supportedRecipes, inputSlots, outputSlots, fuelSlots, progressSlot, globalModifier, perTypeModifiers, progressTextures, properties));
         }
     }
 

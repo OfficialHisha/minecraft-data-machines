@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
 
@@ -119,6 +120,36 @@ public class Machine {
 
     public void setRemainingTime(int remainingTime) {
         this.remainingTime = remainingTime;
+    }
+
+    public void updateProgressItem() {
+        if (type.progressSlot() == null) return;
+
+        int slot = type.progressSlot();
+        ItemStack item = inventory.getItem(slot);
+        if (item == null) return;
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
+
+        int progress = 0;
+        if (activeRecipe != null) {
+            progress = Math.toIntExact(Math.round((1.0 - (double) remainingTime / activeRecipe.processingTime()) * 100));
+        }
+
+        Integer bestKey = null;
+        for (Integer key : type.progressTextures().keySet()) {
+            if (key <= progress) {
+                if (bestKey == null || key > bestKey) {
+                    bestKey = key;
+                }
+            }
+        }
+
+        if (bestKey != null) {
+            meta.displayName(Component.text(type.progressTextures().get(bestKey)));
+            item.setItemMeta(meta);
+        }
     }
 
     public void destroy() {

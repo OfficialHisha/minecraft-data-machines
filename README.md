@@ -65,9 +65,12 @@ machines:
       redstone_required: "disabled" # Redstone state: "on", "off", "disabled"
       fuel_required: false # (Optional) Whether the machine consumes fuel
       fuel_items: ["coal", "charcoal"] # (Optional) List of items that can be used as fuel
-      requires_permission: "permission.node" # (Optional) Permission required to use the machine
-    progress_elements:
-      10: texture1 # (Optional) Map of progress percentage -> texture to change block texture during processing
+    requires_permission: "permission.node" # (Optional) Permission required to use the machine
+    progress_slot: 0 # (Optional) Slot used to display progress via item renaming
+    progress_textures:
+      0: "Idle" # (Optional) Map of progress percentage -> texture name
+      50: "Processing..."
+      100: "Done!"
 ```
 
 #### Example
@@ -103,7 +106,6 @@ When a machine finishes processing a recipe, it follows these rules to determine
 
 ## TODO
 
-- Implement updating gui textures based on machine progress.
 - Implement updating gui textures based on fuel level.
 
 ---

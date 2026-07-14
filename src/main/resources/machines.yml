@@ -8,10 +8,14 @@ machines:
     properties:
       always_drop: true
       fuel_required: false
+    progress_slot: 8
     progress_elements:
-      10: texture1
-      50: texture2
-      90: texture3
+      0: "0"
+      10: "10"
+      25: "25"
+      50: "50"
+      75: "75"
+      90: "90"
 
   auto_sorter:
     machine_name: "Auto Sorter"
@@ -25,6 +29,14 @@ machines:
       redstone_required: "on"
       fuel_required: false
       requires_permission: "datamachines.sorting"
+    progress_slot: 8
+    progress_elements:
+      0: "0"
+      10: "10"
+      25: "25"
+      50: "50"
+      75: "75"
+      90: "90"
 
   chemical_mixer:
     machine_name: "Chemical Mixer"
@@ -39,6 +51,14 @@ machines:
       redstone_required: "disabled"
       fuel_required: true
       fuel_items: ["coal"]
+    progress_slot: 8
+    progress_elements:
+      0: "0"
+      10: "10"
+      25: "25"
+      50: "50"
+      75: "75"
+      90: "90"
 
   omni_assembler:
     machine_name: "Omni Assembler"
@@ -56,3 +76,11 @@ machines:
       allow_pushing: false
       redstone_required: "off"
       fuel_required: false
+    progress_slot: 8
+    progress_elements:
+      0: "0"
+      10: "10"
+      25: "25"
+      50: "50"
+      75: "75"
+      90: "90"

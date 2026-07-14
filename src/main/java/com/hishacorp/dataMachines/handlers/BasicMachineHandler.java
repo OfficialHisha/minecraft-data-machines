@@ -31,6 +31,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         MachineType type = machine.getType();
 
         if (!canProcess(location, inventory, type)) {
+            machine.updateProgressItem();
             return;
         }
 
@@ -39,6 +40,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         } else {
             tryStartNewRecipe(machine);
         }
+        machine.updateProgressItem();
     }
 
     private boolean canProcess(Location location, Inventory inventory, MachineType type) {

@@ -10,6 +10,7 @@ public record MachineType(
     List<Integer> inputSlots,
     List<Integer> outputSlots,
     List<Integer> fuelSlots,
+    Integer progressSlot,
     double globalModifier,
     Map<String, Double> perTypeModifiers,
     Map<Integer, String> progressTextures,

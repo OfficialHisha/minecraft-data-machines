@@ -31,7 +31,8 @@ The plugin translates configuration files into active Minecraft logic. Agents mu
     - `output_slots`: A list of slots in the machine inventory that should be handled as output slots. **Required**
     - `fuel_slots`: A list of slots in the machine inventory that should be handled as fuel slots (if fuel is required, otherwise these will be disabled).
     - `modifiers`: Can be a single numeric value (global speed multiplier) or a map of `recipe_type -> multiplier`.
-    - `progress_textures`: A map of `progress -> texture` to indicate progress on the GUI. If omitted the block will not change texture during processing. When processing is done the texture should reset to the base texture of the machine.
+    - `progress_slot`: The slot index in the machine's inventory that holds the item used to display progress. This item is renamed dynamically based on the current processing progress.
+    - `progress_textures`: A map of `progress -> texture` (e.g., `0: "Idle", 50: "Halfway", 100: "Done"`) used to rename the item in the `progress_slot`. If omitted, no renaming occurs.
     - `properties`:
         - `always_drop`: Flag to chose if the machine will always drop (i.e. not use an internal buffer and not push to adjacent inventories). Default: false.
         - `stop_on_full_buffer`: Flag to chose if the machine will stop working if the internal buffer is full (internal buffer is one stack for each output item, if either stack is full the buffer is considered full). Default: true (not used if `always_drop` is true)
