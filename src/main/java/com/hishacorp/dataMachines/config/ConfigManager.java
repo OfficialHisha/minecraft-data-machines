@@ -107,13 +107,10 @@ public class ConfigManager {
             } else if (modifierObj instanceof Integer i) {
                 globalModifier = i.doubleValue();
             } else if (modifierObj instanceof Map<?, ?>) {
-                ConfigurationSection modSection = machineSection.getConfigurationSection("modifiers");
-                if (modSection != null) {
-                    ConfigurationSection perTypeSection = modSection.getConfigurationSection("per_type");
-                    if (perTypeSection != null) {
-                        for (String key : perTypeSection.getKeys(false)) {
-                            perTypeModifiers.put(key, perTypeSection.getDouble(key));
-                        }
+                ConfigurationSection modifiersSection = machineSection.getConfigurationSection("modifiers");
+                if (modifiersSection != null) {
+                    for (String key : modifiersSection.getKeys(false)) {
+                        perTypeModifiers.put(key, modifiersSection.getDouble(key));
                     }
                 }
             }

@@ -66,14 +66,14 @@ machines:
       fuel_required: false # (Optional) Whether the machine consumes fuel
       fuel_items: ["coal", "charcoal"] # (Optional) List of items that can be used as fuel
     requires_permission: "permission.node" # (Optional) Permission required to use the machine
-    progress_slot: 0 # (Optional) Slot used to display progress via item renaming
+    progress_slot: 0 # (Optional) Slot used to display progress via nexo item
     progress_textures:
-      0: "Idle" # (Optional) Map of progress percentage -> texture name
-      50: "Processing..."
-      100: "Done!"
+      0: "0_percent" # (Optional) Map of progress percentage -> nexo item name
+      50: "50_percent"
+      100: "100_percent"
 ```
 
-#### Example
+#### Examples
 
 ```yaml
 # Example of a complex machine
@@ -89,6 +89,40 @@ machines:
       redstone_required: "on"
       fuel_required: false
       requires_permission: "datamachines.sorting"
+    progress_slot: 8
+    progress_textures:
+      0: "0_percent"
+      ...
+      50: "50_percent"
+      ...
+      100: "100_percent"
+```
+
+```yaml
+# Example of a complex machine using fuel, but double the speed of the Auto Sorter, also does mixing but at half speed.
+  auto_sorter:
+    machine_name: "Turbo Sorter"
+    supported_recipe_types: ["sorting", "mixing"]
+    input_slots: [0]
+    output_slots: [1, 2]
+    fuel_slots: [3]
+    modifiers:
+      mixing: 0.5
+      sorting: 2.0
+    properties:
+      stop_on_full_buffer: true
+      allow_pushing: true
+      redstone_required: "on"
+      fuel_required: true
+      fuel_items: ["coal", "charcoal"]
+      requires_permission: "datamachines.turbo_sorting"
+    progress_slot: 8
+    progress_textures:
+      0: "0_percent"
+      ...
+      50: "50_percent"
+      ...
+      100: "100_percent"
 ```
 
 ## Output Precedence

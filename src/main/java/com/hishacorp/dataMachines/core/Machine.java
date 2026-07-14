@@ -2,6 +2,7 @@ package com.hishacorp.dataMachines.core;
 
 import com.hishacorp.dataMachines.api.MachineType;
 import com.hishacorp.dataMachines.api.Recipe;
+import com.nexomc.nexo.api.NexoItems;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -36,7 +37,7 @@ public class Machine {
     }
 
     private void populateFillerSlots() {
-        ItemStack filler = new ItemStack(org.bukkit.Material.STRUCTURE_VOID);
+        ItemStack filler = NexoItems.itemFromId("filler_item").build();
         for (int i = 0; i < 27; i++) {
             if (!isConfiguredSlot(i)) {
                 inventory.setItem(i, filler);
@@ -147,8 +148,8 @@ public class Machine {
         }
 
         if (bestKey != null) {
-            meta.displayName(Component.text(type.progressTextures().get(bestKey)));
-            item.setItemMeta(meta);
+            ItemStack progressItem = NexoItems.itemFromId(type.progressTextures().get(bestKey)).build();
+            inventory.setItem(slot, progressItem);
         }
     }
 

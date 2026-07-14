@@ -5,6 +5,7 @@ import com.nexomc.nexo.api.NexoItems;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -85,6 +86,31 @@ public class InventoryListener implements Listener {
 
             return;
         }
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        log.debug("onInventoryDrag");
+        if (!(event.getInventory().getHolder() instanceof Machine.MachineInventoryHolder(Machine machine))) return;
+
+        List<Integer> fuelSlots = machine.getFuelSlots();
+        List<String> fuelItems = machine.getType().properties().fuelItems();
+        ItemStack cursorItem = event.getCursor();
+
+        for (int slot : event.getInventorySlots()) {
+            if (fuelSlots.contains(slot)) {
+                if (!isFuelItem(cursorItem, fuelItems)) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+
+            if (machine.getOutputSlots().contains(slot)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
     }
 
     private boolean isConfiguredSlot(Machine machine, int slot) {

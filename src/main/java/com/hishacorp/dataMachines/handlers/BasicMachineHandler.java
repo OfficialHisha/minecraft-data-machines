@@ -31,7 +31,6 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         MachineType type = machine.getType();
 
         if (!canProcess(location, inventory, type)) {
-            machine.updateProgressItem();
             return;
         }
 
@@ -40,6 +39,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         } else {
             tryStartNewRecipe(machine);
         }
+
         machine.updateProgressItem();
     }
 
@@ -53,6 +53,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
             return false;
         }
 
+        /*
         // Fuel check
         if (type.properties().fuelRequired()) {
             boolean hasFuel = false;
@@ -66,6 +67,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
             }
             return hasFuel;
         }
+         */
 
         return true;
     }
@@ -74,11 +76,13 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         if (fuelItems == null || fuelItems.isEmpty()) {
             return true; // If no specific fuel items are defined, any item counts as fuel
         }
+
         for (String fuelId : fuelItems) {
             if (isItemMatch(item, fuelId)) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -134,22 +138,24 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
                 }
             }
 
-            if (found && type.properties().fuelRequired()) {
-                boolean hasFuel = false;
-
-                for (int slot : type.fuelSlots()) {
-                    ItemStack item = inventory.getItem(slot);
-                    if (item != null && isFuelItem(item, fuelItems)) {
-                        hasFuel = true;
-                        break;
-                    }
-                }
-                return hasFuel;
-            }
-            return found;
+            if (!found) return false;
         }
 
-        return false;
+        if (type.properties().fuelRequired()) {
+            boolean hasFuel = false;
+
+            for (int slot : type.fuelSlots()) {
+                ItemStack item = inventory.getItem(slot);
+                if (item != null && isFuelItem(item, fuelItems)) {
+                    hasFuel = true;
+                    break;
+                }
+            }
+
+            if (!hasFuel) return false;
+        }
+
+        return true;
     }
 
     private void consumeInputs(Inventory inventory, MachineType type, Recipe recipe) {
