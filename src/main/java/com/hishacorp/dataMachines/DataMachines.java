@@ -6,6 +6,7 @@ import com.hishacorp.dataMachines.core.RecipeRegistry;
 import com.hishacorp.dataMachines.handlers.BasicMachineHandler;
 import com.hishacorp.dataMachines.handlers.BasicRecipeHandler;
 import com.hishacorp.dataMachines.listeners.ChunkListener;
+import com.hishacorp.dataMachines.listeners.InventoryListener;
 import com.hishacorp.dataMachines.listeners.NexoFurnitureListener;
 import com.nexomc.nexo.api.NexoItems;
 import org.bukkit.Bukkit;
@@ -15,10 +16,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 
 public final class DataMachines extends JavaPlugin {
+    private static DataMachines plugin;
     private MachineManager machineManager;
 
     @Override
     public void onEnable() {
+        plugin = this;
+
         // Setup Configs
         File recipesFile = new File(getDataFolder(), "recipes.yml");
         File machinesFile = new File(getDataFolder(), "machines.yml");
@@ -42,10 +46,11 @@ public final class DataMachines extends JavaPlugin {
 
         // Register Listeners
         this.getServer().getPluginManager().registerEvents(new NexoFurnitureListener(this.machineManager), this);
-        this.getServer().getPluginManager().registerEvents(new ChunkListener(this, this.machineManager), this);
+        this.getServer().getPluginManager().registerEvents(new ChunkListener(this.machineManager), this);
+        this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 
         // Start Tick Loop
-        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> this.machineManager.tick(), 10L, 10L);
+        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> this.machineManager.tick(), 1L, 1L);
 
         getLogger().info("DataMachines enabled successfully!");
         
@@ -91,5 +96,9 @@ public final class DataMachines extends JavaPlugin {
     @Override
     public void onDisable() {
         getLogger().info("DataMachines disabled!");
+    }
+
+    public static DataMachines getPlugin() {
+        return plugin;
     }
 }

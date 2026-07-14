@@ -22,14 +22,14 @@ recipes:
       - { item: "cobblestone", amount: 1 }
     outputs:
       - { item: "cobblestone", amount: 1, chance: 0.9 }
-      - { item: "diamond", amount: 1, chance: 0.5 }
+      - { item: "diamond", amount: 1, chance: 0.01 }
     processing_time: 1
 
   steel_alloy:
     type: "mixing"
     inputs:
-      - { item: "nexo:iron_dust", amount: 2 }
-      - { item: "nexo:carbon_dust", amount: 1 }
+      - { item: "coal", amount: 2 }
+      - { item: "iron_ingot", amount: 1 }
     outputs:
-      - { item: "nexo:steel_ingot", amount: 3, chance: 1.0 }
+      - { item: "copper_ingot", amount: 2, chance: 1.0 }
     processing_time: 500

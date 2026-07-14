@@ -103,8 +103,8 @@ When a machine finishes processing a recipe, it follows these rules to determine
 
 ## TODO
 
-- Add a blocking item to all unused slots of a machine inventory that cannot be taken out by players.
-- Refactor to use Nexo custom blocks instead of furniture.
+- Implement updating gui textures based on machine progress.
+- Implement updating gui textures based on fuel level.
 
 ---
 

@@ -1,5 +1,6 @@
 package com.hishacorp.dataMachines.listeners;
 
+import com.hishacorp.dataMachines.DataMachines;
 import com.hishacorp.dataMachines.core.MachineManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -10,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,12 +22,10 @@ import static com.hishacorp.dataMachines.core.MachineManager.KEY_UUID;
 public class ChunkListener implements Listener {
     private static final Logger log = LoggerFactory.getLogger(ChunkListener.class);
     private final MachineManager machineManager;
-    private final JavaPlugin plugin;
 
     private final Set<Long> scannedChunks = new HashSet<>();
 
-    public ChunkListener(JavaPlugin plugin, MachineManager machineManager) {
-        this.plugin = plugin;
+    public ChunkListener(MachineManager machineManager) {
         this.machineManager = machineManager;
     }
 
@@ -42,7 +40,7 @@ public class ChunkListener implements Listener {
         if (!scannedChunks.add(key)) return;
 
         // Scan 1 tick later to ensure entities are fully present/settled
-        Bukkit.getScheduler().runTask(plugin, () -> scanChunkEntities(chunk));
+        Bukkit.getScheduler().runTask(DataMachines.getPlugin(), () -> scanChunkEntities(chunk));
     }
 
     private void scanChunkEntities(Chunk chunk) {

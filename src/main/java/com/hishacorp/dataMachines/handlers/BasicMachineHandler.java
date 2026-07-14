@@ -117,8 +117,11 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
     }
 
     private boolean hasInputs(Inventory inventory, MachineType type, Recipe recipe) {
+        List<String> fuelItems = type.properties().fuelItems();
+
         for (Recipe.ItemStackData input : recipe.inputs()) {
             boolean found = false;
+
             for (int slot : type.inputSlots()) {
                 ItemStack item = inventory.getItem(slot);
                 if (item != null && isItemMatch(item, input.item())) {
@@ -128,9 +131,23 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
                     }
                 }
             }
+
+            if (found && type.properties().fuelRequired()) {
+                boolean hasFuel = false;
+
+                for (int slot : type.fuelSlots()) {
+                    ItemStack item = inventory.getItem(slot);
+                    if (item != null && isFuelItem(item, fuelItems)) {
+                        hasFuel = true;
+                        break;
+                    }
+                }
+                return hasFuel;
+            }
             return found;
         }
-        return true;
+
+        return false;
     }
 
     private void consumeInputs(Inventory inventory, MachineType type, Recipe recipe) {
@@ -168,9 +185,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
             modifier = type.perTypeModifiers().get(recipe.type());
         }
 
-        // We'll assume a tick is 10 units of time.
-        // If modifier is 2.0, it processes 20 units per tick.
-        int processedThisTick = Math.toIntExact(10 * Math.round(modifier));
+        int processedThisTick = Math.toIntExact(Math.round(modifier));
         int newTime = remainingTime - processedThisTick;
 
         if (newTime <= 0) {

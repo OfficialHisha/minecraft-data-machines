@@ -29,15 +29,16 @@ machines:
   chemical_mixer:
     machine_name: "Chemical Mixer"
     supported_recipe_types: ["mixing"]
-    input_slots: [0]
-    output_slots: [1]
-    fuel_slots: [2]
+    input_slots: [0, 1]
+    output_slots: [2]
+    fuel_slots: [3]
     modifiers: 0.5
     properties:
       stop_on_full_buffer: true
       allow_pushing: false
       redstone_required: "disabled"
       fuel_required: true
+      fuel_items: ["coal"]
 
   omni_assembler:
     machine_name: "Omni Assembler"

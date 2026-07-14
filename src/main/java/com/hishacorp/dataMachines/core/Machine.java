@@ -31,6 +31,22 @@ public class Machine {
         this.type = type;
 
         this.inventory = Bukkit.createInventory(new MachineInventoryHolder(this), 27, Component.text(type.name()));
+        populateFillerSlots();
+    }
+
+    private void populateFillerSlots() {
+        ItemStack filler = new ItemStack(org.bukkit.Material.STRUCTURE_VOID);
+        for (int i = 0; i < 27; i++) {
+            if (!isConfiguredSlot(i)) {
+                inventory.setItem(i, filler);
+            }
+        }
+    }
+
+    private boolean isConfiguredSlot(int slot) {
+        return type.inputSlots().contains(slot) || 
+               type.outputSlots().contains(slot) || 
+               type.fuelSlots().contains(slot);
     }
 
     public record MachineInventoryHolder(Machine machine) implements InventoryHolder {
@@ -106,8 +122,9 @@ public class Machine {
     }
 
     public void destroy() {
-        for (ItemStack itemStack : inventory.getContents()) {
-            if (itemStack != null) {
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack itemStack = inventory.getItem(i);
+            if (itemStack != null && isConfiguredSlot(i)) {
                 location.getWorld().dropItemNaturally(location, itemStack);
             }
         }
