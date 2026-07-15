@@ -9,13 +9,18 @@ import com.hishacorp.dataMachines.listeners.ChunkListener;
 import com.hishacorp.dataMachines.listeners.InventoryListener;
 import com.hishacorp.dataMachines.listeners.NexoFurnitureListener;
 import com.nexomc.nexo.api.NexoItems;
+import com.nexomc.nexo.items.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
 public final class DataMachines extends JavaPlugin {
+    private static final Logger log = LoggerFactory.getLogger(DataMachines.class);
     private static DataMachines plugin;
     private MachineManager machineManager;
 
@@ -66,12 +71,16 @@ public final class DataMachines extends JavaPlugin {
                 Player player = Bukkit.getPlayer(args[2]);
 
                 if (player != null) {
-                    try {
-                        player.getInventory().addItem(NexoItems.itemFromId(machineId).build());
-                        player.sendMessage("Given " + machineId);
-                    } catch (NullPointerException e) {
+                    ItemStack itemStack = getNexoItem(machineId);
+
+                    if (itemStack == null) {
                         sender.sendMessage("Machine id " + machineId + " not found!");
+                        return true;
                     }
+
+                    player.getInventory().addItem(itemStack);
+                    player.sendMessage("Given " + machineId);
+
                     return true;
                 }
 
@@ -100,5 +109,29 @@ public final class DataMachines extends JavaPlugin {
 
     public static DataMachines getPlugin() {
         return plugin;
+    }
+
+    public static ItemStack getNexoItem(String nexoItemId) {
+        ItemBuilder builder = NexoItems.itemFromId(nexoItemId);
+
+        if (builder == null) {
+            log.error("Tried to load nexo item {}, but no such item has been defined!", nexoItemId);
+            return null;
+        }
+
+        return builder.build();
+    }
+
+    public static boolean isItemMatch(ItemStack item, String itemID) {
+        if (itemID.startsWith("nexo:")) {
+            String nexoId = itemID.substring(5);
+
+            ItemStack nexoStack = getNexoItem(nexoId);
+
+            if (nexoStack == null) return false;
+
+            return nexoStack.isSimilar(item);
+        }
+        return item.getType().name().equalsIgnoreCase(itemID);
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface RecipeHandler {
     /**
-     * Processes a recipe and and returns the resulting items.
+     * Processes a recipe and returns the resulting items.
      * 
      * @param recipe The recipe to process.
      * @param inventory The machine's internal inventory.

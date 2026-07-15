@@ -1,8 +1,8 @@
 package com.hishacorp.dataMachines.core;
 
+import com.hishacorp.dataMachines.DataMachines;
 import com.hishacorp.dataMachines.api.MachineType;
 import com.hishacorp.dataMachines.api.Recipe;
-import com.nexomc.nexo.api.NexoItems;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,7 +23,7 @@ public class Machine {
     private MachineType type;
     private PersistentDataContainer container;
 
-    private Inventory inventory;
+    private final Inventory inventory;
     private Recipe activeRecipe;
     private int remainingTime;
 
@@ -37,7 +37,10 @@ public class Machine {
     }
 
     private void populateFillerSlots() {
-        ItemStack filler = NexoItems.itemFromId("filler_item").build();
+        ItemStack filler = DataMachines.getNexoItem("filler_item");
+
+        if (filler == null) return;
+
         for (int i = 0; i < 27; i++) {
             if (!isConfiguredSlot(i)) {
                 inventory.setItem(i, filler);
@@ -85,10 +88,6 @@ public class Machine {
 
     public List<Integer> getFuelSlots() {
         return type.fuelSlots();
-    }
-
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
     }
 
     public UUID getUuid() {
@@ -148,7 +147,10 @@ public class Machine {
         }
 
         if (bestKey != null) {
-            ItemStack progressItem = NexoItems.itemFromId(type.progressTextures().get(bestKey)).build();
+            ItemStack progressItem = DataMachines.getNexoItem(type.progressTextures().get(bestKey));
+
+            if (progressItem == null) return;
+
             inventory.setItem(slot, progressItem);
         }
     }

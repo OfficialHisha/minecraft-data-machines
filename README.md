@@ -141,6 +141,7 @@ When a machine finishes processing a recipe, it follows these rules to determine
 ## TODO
 
 - Implement updating gui textures based on fuel level.
+- Better error handling and messaging when failing to load Nexo items.
 
 ---
 

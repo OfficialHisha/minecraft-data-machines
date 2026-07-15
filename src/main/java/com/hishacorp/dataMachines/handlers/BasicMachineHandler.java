@@ -1,10 +1,10 @@
 package com.hishacorp.dataMachines.handlers;
 
+import com.hishacorp.dataMachines.DataMachines;
 import com.hishacorp.dataMachines.api.MachineType;
 import com.hishacorp.dataMachines.api.Recipe;
 import com.hishacorp.dataMachines.core.Machine;
 import com.hishacorp.dataMachines.core.MachineManager;
-import com.nexomc.nexo.api.NexoItems;
 import org.bukkit.Location;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -16,8 +16,11 @@ import java.util.*;
 public class BasicMachineHandler implements MachineHandler<MachineType> {
     private static final Logger log = LoggerFactory.getLogger(BasicMachineHandler.class);
 
+    protected static final ItemStack errorStack = new ItemStack(org.bukkit.Material.STONE);
+
     protected final MachineManager machineManager;
     protected final RecipeHandler recipeHandler;
+
 
     public BasicMachineHandler(MachineManager machineManager, RecipeHandler recipeHandler) {
         this.machineManager = machineManager;
@@ -78,7 +81,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         }
 
         for (String fuelId : fuelItems) {
-            if (isItemMatch(item, fuelId)) {
+            if (DataMachines.isItemMatch(item, fuelId)) {
                 return true;
             }
         }
@@ -130,7 +133,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
 
             for (int slot : type.inputSlots()) {
                 ItemStack item = inventory.getItem(slot);
-                if (item != null && isItemMatch(item, input.item())) {
+                if (item != null && DataMachines.isItemMatch(item, input.item())) {
                     if (item.getAmount() >= input.amount()) {
                         found = true;
                         break;
@@ -162,7 +165,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         for (Recipe.ItemStackData input : recipe.inputs()) {
             for (int slot : type.inputSlots()) {
                 ItemStack item = inventory.getItem(slot);
-                if (item != null && isItemMatch(item, input.item())) {
+                if (item != null && DataMachines.isItemMatch(item, input.item())) {
                     if (item.getAmount() >= input.amount()) {
                         item.setAmount(item.getAmount() - input.amount());
                         break;
@@ -170,16 +173,6 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
                 }
             }
         }
-    }
-
-    private boolean isItemMatch(ItemStack item, String itemID) {
-        // Check if it's a Nexo item first
-        if (itemID.startsWith("nexo:")) {
-            String nexoId = itemID.substring(5);
-            return NexoItems.itemFromId(nexoId).build().isSimilar(item);
-        }
-        // Fallback to vanilla material
-        return item.getType().name().equalsIgnoreCase(itemID);
     }
 
     private void processActiveRecipe(Machine machine) {
@@ -251,13 +244,19 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         ItemStack itemStack;
 
         if (itemID.startsWith("nexo:")) {
-            itemStack = NexoItems.itemFromId(itemID.substring(5)).build();
+            itemStack = DataMachines.getNexoItem(itemID.substring(5));
+
+            if (itemStack == null) {
+                log.error("Could not create item stack for {}", data.item());
+                itemStack = errorStack;
+            }
+
         } else {
             try {
                 itemStack = new ItemStack(org.bukkit.Material.valueOf(itemID.toUpperCase()));
             } catch (Exception e) {
                 log.error("Could not create item stack for " + data.item(), e);
-                itemStack = new ItemStack(org.bukkit.Material.STONE);
+                itemStack = errorStack;
             }
         }
 

@@ -1,7 +1,7 @@
 package com.hishacorp.dataMachines.listeners;
 
+import com.hishacorp.dataMachines.DataMachines;
 import com.hishacorp.dataMachines.core.Machine;
-import com.nexomc.nexo.api.NexoItems;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -83,8 +83,6 @@ public class InventoryListener implements Listener {
             } else {
                 clickedInventory.setItem(event.getSlot(), remaining);
             }
-
-            return;
         }
     }
 
@@ -121,18 +119,12 @@ public class InventoryListener implements Listener {
 
     private boolean isFuelItem(ItemStack item, List<String> fuelItems) {
         if (fuelItems == null || fuelItems.isEmpty()) return true;
-        for (String fuelId : fuelItems) {
-            if (isItemMatch(item, fuelId)) return true;
-        }
-        return false;
-    }
 
-    private boolean isItemMatch(ItemStack item, String itemID) {
-        if (itemID.startsWith("nexo:")) {
-            String nexoId = itemID.substring(5);
-            return NexoItems.itemFromId(nexoId).build().isSimilar(item);
+        for (String fuelId : fuelItems) {
+            if (DataMachines.isItemMatch(item, fuelId)) return true;
         }
-        return item.getType().name().equalsIgnoreCase(itemID);
+
+        return false;
     }
 
     private ItemStack insertIntoSlots(Inventory inventory, ItemStack stack, List<Integer> slots, Predicate<ItemStack> filter) {
