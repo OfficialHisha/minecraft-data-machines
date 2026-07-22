@@ -96,6 +96,7 @@ public class ConfigManager {
             List<Integer> outputSlots = machineSection.getIntegerList("output_slots");
             List<Integer> fuelSlots = machineSection.getIntegerList("fuel_slots");
             Integer progressSlot = machineSection.getInt("progress_slot");
+            Integer fuelProgressSlot = machineSection.getInt("fuel_progress_slot");
             
             // Handle modifiers: can be a single number or a map
             Object modifierObj = machineSection.get("modifiers");
@@ -127,6 +128,18 @@ public class ConfigManager {
                 }
             }
 
+            Map<Integer, String> fuelProgressTextures = new HashMap<>();
+            ConfigurationSection fuelProgressSection = machineSection.getConfigurationSection("fuel_progress_elements");
+            if (fuelProgressSection != null) {
+                for (String key : fuelProgressSection.getKeys(false)) {
+                    try {
+                        fuelProgressTextures.put(Integer.parseInt(key), fuelProgressSection.getString(key));
+                    } catch (NumberFormatException e) {
+                        // Ignore invalid progress keys
+                    }
+                }
+            }
+
             ConfigurationSection propsSection = machineSection.getConfigurationSection("properties");
             if (propsSection == null) continue;
 
@@ -136,12 +149,29 @@ public class ConfigManager {
                 propsSection.getBoolean("allow_pushing", true),
                 propsSection.getString("redstone_required", "disabled"),
                 propsSection.getBoolean("fuel_required", false),
-                propsSection.getStringList("fuel_items"),
+                loadFuelItems(propsSection),
                 propsSection.getString("requires_permission", null)
             );
 
-            machineTypes.put(id, new MachineType(id, name, supportedRecipes, inputSlots, outputSlots, fuelSlots, progressSlot, globalModifier, perTypeModifiers, progressTextures, properties));
+            machineTypes.put(id, new MachineType(id, name, supportedRecipes, inputSlots, outputSlots, fuelSlots, progressSlot, fuelProgressSlot, globalModifier, perTypeModifiers, progressTextures, fuelProgressTextures, properties));
         }
+    }
+
+    private Map<String, Integer> loadFuelItems(ConfigurationSection section) {
+        Map<String, Integer> fuelItems = new HashMap<>();
+        ConfigurationSection fuelSection = section.getConfigurationSection("fuel_items");
+        if (fuelSection != null) {
+            for (String key : fuelSection.getKeys(false)) {
+                fuelItems.put(key, fuelSection.getInt(key));
+            }
+        } else {
+            // Fallback for old config format or simple list
+            List<String> list = section.getStringList("fuel_items");
+            for (String item : list) {
+                fuelItems.put(item, 200);
+            }
+        }
+        return fuelItems;
     }
 
     public Map<String, Recipe> getRecipes() {

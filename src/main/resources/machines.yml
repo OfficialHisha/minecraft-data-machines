@@ -50,7 +50,8 @@ machines:
       allow_pushing: false
       redstone_required: "disabled"
       fuel_required: true
-      fuel_items: ["coal"]
+      fuel_items:
+        coal: 1600
     progress_slot: 8
     progress_elements:
       0: "0"
@@ -59,6 +60,15 @@ machines:
       50: "50"
       75: "75"
       90: "90"
+    fuel_progress_slot: 7
+    fuel_progress_elements:
+      100: "100"
+      90: "90"
+      75: "75"
+      50: "50"
+      25: "25"
+      10: "10"
+      0: "0"
 
   omni_assembler:
     machine_name: "Omni Assembler"

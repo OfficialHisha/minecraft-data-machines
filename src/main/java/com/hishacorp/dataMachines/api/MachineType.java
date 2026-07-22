@@ -11,9 +11,11 @@ public record MachineType(
     List<Integer> outputSlots,
     List<Integer> fuelSlots,
     Integer progressSlot,
+    Integer fuelProgressSlot,
     double globalModifier,
     Map<String, Double> perTypeModifiers,
     Map<Integer, String> progressTextures,
+    Map<Integer, String> fuelProgressTextures,
     MachineProperties properties
 ) {
     public record MachineProperties(
@@ -22,7 +24,7 @@ public record MachineType(
         boolean allowPushing,
         String redstoneRequired,
         boolean fuelRequired,
-        List<String> fuelItems,
+        Map<String, Integer> fuelItems,
         String requiresPermission
     ) {}
 }

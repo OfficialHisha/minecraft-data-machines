@@ -12,4 +12,4 @@ authors: [Hisha]
 commands:
   dm:
     description: DataMachines debug commands
-    permissions: datamachines.admin
+    permission: datamachines.admin

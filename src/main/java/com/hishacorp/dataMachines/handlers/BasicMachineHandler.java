@@ -33,6 +33,10 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         Inventory inventory = machine.getInventory();
         MachineType type = machine.getType();
 
+        if (type.properties().fuelRequired() && machine.getFuelTimer() > 0) {
+            machine.setFuelTimer(machine.getFuelTimer() - 1);
+        }
+
         if (!canProcess(location, inventory, type)) {
             return;
         }
@@ -44,6 +48,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         }
 
         machine.updateProgressItem();
+        machine.updateFuelProgressItem();
     }
 
     private boolean canProcess(Location location, Inventory inventory, MachineType type) {
@@ -56,31 +61,15 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
             return false;
         }
 
-        /*
-        // Fuel check
-        if (type.properties().fuelRequired()) {
-            boolean hasFuel = false;
-            List<String> fuelItems = type.properties().fuelItems();
-            for (int slot : type.fuelSlots()) {
-                ItemStack item = inventory.getItem(slot);
-                if (item != null && isFuelItem(item, fuelItems)) {
-                    hasFuel = true;
-                    break;
-                }
-            }
-            return hasFuel;
-        }
-         */
-
         return true;
     }
 
-    private boolean isFuelItem(ItemStack item, List<String> fuelItems) {
+    private boolean isFuelItem(ItemStack item, Map<String, Integer> fuelItems) {
         if (fuelItems == null || fuelItems.isEmpty()) {
             return true; // If no specific fuel items are defined, any item counts as fuel
         }
 
-        for (String fuelId : fuelItems) {
+        for (String fuelId : fuelItems.keySet()) {
             if (DataMachines.isItemMatch(item, fuelId)) {
                 return true;
             }
@@ -98,11 +87,16 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
                 continue;
             }
 
-            if (hasInputs(inventory, type, recipe)) {
-                consumeInputs(inventory, type, recipe);
-                if (type.properties().fuelRequired()) {
-                    consumeFuel(inventory, type);
+            if (hasInputs(inventory, type, recipe, machine)) {
+                if (type.properties().fuelRequired() && machine.getFuelTimer() <= 0) {
+                    int fuelDuration = consumeFuel(inventory, type);
+                    if (fuelDuration <= 0) {
+                        return; // Could not consume fuel
+                    }
+                    machine.setFuelTimer(fuelDuration);
+                    machine.setMaxFuelTimer(fuelDuration);
                 }
+                consumeInputs(inventory, type, recipe);
                 machine.setActiveRecipe(recipe);
                 machine.setRemainingTime(recipe.processingTime());
                 return;
@@ -110,23 +104,34 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         }
     }
 
-    private void consumeFuel(Inventory inventory, MachineType type) {
-        List<String> fuelItems = type.properties().fuelItems();
+    private int consumeFuel(Inventory inventory, MachineType type) {
+        Map<String, Integer> fuelItems = type.properties().fuelItems();
         for (int slot : type.fuelSlots()) {
             ItemStack item = inventory.getItem(slot);
             if (item != null && isFuelItem(item, fuelItems)) {
+                ItemStack itemCopy = item.clone();
                 if (item.getAmount() > 1) {
                     item.setAmount(item.getAmount() - 1);
                 } else {
                     inventory.setItem(slot, null);
                 }
-                return;
+                
+                String fuelId = null;
+                for (Map.Entry<String, Integer> entry : fuelItems.entrySet()) {
+                    if (DataMachines.isItemMatch(itemCopy, entry.getKey())) {
+                        fuelId = entry.getKey();
+                        break;
+                    }
+                }
+                
+                return fuelItems.getOrDefault(fuelId, 0);
             }
         }
+        return 0;
     }
 
-    private boolean hasInputs(Inventory inventory, MachineType type, Recipe recipe) {
-        List<String> fuelItems = type.properties().fuelItems();
+    private boolean hasInputs(Inventory inventory, MachineType type, Recipe recipe, Machine machine) {
+        Map<String, Integer> fuelItems = type.properties().fuelItems();
 
         for (Recipe.ItemStackData input : recipe.inputs()) {
             boolean found = false;
@@ -144,7 +149,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
             if (!found) return false;
         }
 
-        if (type.properties().fuelRequired()) {
+        if (type.properties().fuelRequired() && machine.getFuelTimer() <= 0) {
             boolean hasFuel = false;
 
             for (int slot : type.fuelSlots()) {
@@ -179,6 +184,17 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         Recipe recipe = machine.getActiveRecipe();
         int remainingTime = machine.getRemainingTime();
         MachineType type = machine.getType();
+        Inventory inventory = machine.getInventory();
+
+        if (type.properties().fuelRequired() && machine.getFuelTimer() <= 0) {
+            int fuelDuration = consumeFuel(inventory, type);
+            if (fuelDuration <= 0) {
+                // Stop processing if fuel is gone and cannot be refueled
+                return;
+            }
+            machine.setFuelTimer(fuelDuration);
+            machine.setMaxFuelTimer(fuelDuration);
+        }
 
         // Apply modifiers
         double modifier = type.globalModifier();

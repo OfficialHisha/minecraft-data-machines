@@ -27,6 +27,8 @@ public class MachineManager {
     public static final NamespacedKey KEY_TYPE = new NamespacedKey("data-machines", "machine_type");
     public static final NamespacedKey KEY_RECIPE = new NamespacedKey("data-machines", "active_recipe");
     public static final NamespacedKey KEY_TIME = new NamespacedKey("data-machines", "remaining_time");
+    public static final NamespacedKey KEY_FUEL_TIMER = new NamespacedKey("data-machines", "fuel_timer");
+    public static final NamespacedKey KEY_MAX_FUEL_TIMER = new NamespacedKey("data-machines", "max_fuel_timer");
     public static final NamespacedKey KEY_INVENTORY = new NamespacedKey("data-machines", "inventory");
 
     public MachineManager(ConfigManager configManager, RecipeRegistry recipeRegistry) {
@@ -134,6 +136,8 @@ public class MachineManager {
         }
         
         container.set(KEY_TIME, PersistentDataType.INTEGER, machine.getRemainingTime());
+        container.set(KEY_FUEL_TIMER, PersistentDataType.INTEGER, machine.getFuelTimer());
+        container.set(KEY_MAX_FUEL_TIMER, PersistentDataType.INTEGER, machine.getMaxFuelTimer());
 
         ItemStack[] itemStacks = machine.getInventory().getContents();
         byte[] bytes = ItemStack.serializeItemsAsBytes(itemStacks);
@@ -147,6 +151,8 @@ public class MachineManager {
         String recipeId = container.get(KEY_RECIPE, PersistentDataType.STRING);
         byte[] inventoryBytes = container.get(KEY_INVENTORY, PersistentDataType.BYTE_ARRAY);
         int remainingTime = container.getOrDefault(KEY_TIME, PersistentDataType.INTEGER, 0);
+        int fuelTimer = container.getOrDefault(KEY_FUEL_TIMER, PersistentDataType.INTEGER, 0);
+        int maxFuelTimer = container.getOrDefault(KEY_MAX_FUEL_TIMER, PersistentDataType.INTEGER, 0);
 
         if (uuidStr == null || typeId == null) {
             log.warn("Machine found with missing data: UUID={}, Type={}", uuidStr, typeId);
@@ -176,6 +182,8 @@ public class MachineManager {
 
         machine.getInventory().setContents(ItemStack.deserializeItemsFromBytes(inventoryBytes));
         machine.setRemainingTime(remainingTime);
+        machine.setFuelTimer(fuelTimer);
+        machine.setMaxFuelTimer(maxFuelTimer);
         addMachine(machine);
         log.debug("Loaded machine {} of type {}", machine.getUuid(), typeId);
     }

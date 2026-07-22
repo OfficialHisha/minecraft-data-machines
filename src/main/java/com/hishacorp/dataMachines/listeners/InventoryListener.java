@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class InventoryListener implements Listener {
@@ -28,7 +29,7 @@ public class InventoryListener implements Listener {
         ItemStack cursorItem = event.getCursor();
 
         List<Integer> fuelSlots = machine.getFuelSlots();
-        List<String> fuelItems = machine.getType().properties().fuelItems();
+        Map<String, Integer> fuelItems = machine.getType().properties().fuelItems();
 
         if (slot >= 0 && slot < 27) {
             if (!isConfiguredSlot(machine, slot)) {
@@ -92,7 +93,7 @@ public class InventoryListener implements Listener {
         if (!(event.getInventory().getHolder() instanceof Machine.MachineInventoryHolder(Machine machine))) return;
 
         List<Integer> fuelSlots = machine.getFuelSlots();
-        List<String> fuelItems = machine.getType().properties().fuelItems();
+        Map<String, Integer> fuelItems = machine.getType().properties().fuelItems();
         ItemStack cursorItem = event.getCursor();
 
         for (int slot : event.getInventorySlots()) {
@@ -117,13 +118,13 @@ public class InventoryListener implements Listener {
                machine.getType().fuelSlots().contains(slot);
     }
 
-    private boolean isFuelItem(ItemStack item, List<String> fuelItems) {
+    private boolean isFuelItem(ItemStack item, Map<String, Integer> fuelItems) {
         if (fuelItems == null || fuelItems.isEmpty()) return true;
-
-        for (String fuelId : fuelItems) {
+        
+        for (String fuelId : fuelItems.keySet()) {
             if (DataMachines.isItemMatch(item, fuelId)) return true;
         }
-
+        
         return false;
     }
 

@@ -64,13 +64,21 @@ machines:
       allow_pushing: true # If true, machine tries to push items to adjacent inventories
       redstone_required: "disabled" # Redstone state: "on", "off", "disabled"
       fuel_required: false # (Optional) Whether the machine consumes fuel
-      fuel_items: ["coal", "charcoal"] # (Optional) List of items that can be used as fuel
+      fuel_items: # (Optional) List of items that can be used as fuel
+        coal: 1200
+        charcoal: 1200
     requires_permission: "permission.node" # (Optional) Permission required to use the machine
     progress_slot: 0 # (Optional) Slot used to display progress via nexo item
-    progress_textures:
-      0: "0_percent" # (Optional) Map of progress percentage -> nexo item name
+    progress_textures: # (Optional) Map of progress percentage -> nexo item name
+      0: "0_percent"
       50: "50_percent"
       100: "100_percent"
+    fuel_progress_slot: 0 # (Optional) Slot used to display remaining fuel via nexo item
+    fuel_progress_elements: # (Optional) Map of fuel remaining percentage -> nexo item name
+      100: "100_percent"
+      50: "50_percent"
+      0: "0_percent"
+    
 ```
 
 #### Examples
@@ -114,10 +122,19 @@ machines:
       allow_pushing: true
       redstone_required: "on"
       fuel_required: true
-      fuel_items: ["coal", "charcoal"]
+      fuel_items:
+        coal: 1200
+        charcoal: 1200
       requires_permission: "datamachines.turbo_sorting"
     progress_slot: 8
     progress_textures:
+      0: "0_percent"
+      ...
+      50: "50_percent"
+      ...
+      100: "100_percent"
+    fuel_progress_slot: 7
+    fuel_progress_elements:
       0: "0_percent"
       ...
       50: "50_percent"
@@ -140,7 +157,6 @@ When a machine finishes processing a recipe, it follows these rules to determine
 
 ## TODO
 
-- Implement updating gui textures based on fuel level.
 - Better error handling and messaging when failing to load Nexo items.
 
 ---

@@ -26,6 +26,8 @@ public class Machine {
     private final Inventory inventory;
     private Recipe activeRecipe;
     private int remainingTime;
+    private int fuelTimer;
+    private int maxFuelTimer;
 
     public Machine(Location location, MachineType type) {
         this.uuid = UUID.randomUUID();
@@ -122,6 +124,22 @@ public class Machine {
         this.remainingTime = remainingTime;
     }
 
+    public int getFuelTimer() {
+        return fuelTimer;
+    }
+
+    public void setFuelTimer(int fuelTimer) {
+        this.fuelTimer = fuelTimer;
+    }
+
+    public int getMaxFuelTimer() {
+        return this.maxFuelTimer;
+    }
+
+    public void setMaxFuelTimer(int maxFuelTimer) {
+        this.maxFuelTimer = maxFuelTimer;
+    }
+
     public void updateProgressItem() {
         if (type.progressSlot() == null) return;
 
@@ -155,6 +173,39 @@ public class Machine {
         }
     }
 
+    public void updateFuelProgressItem() {
+        if (type.fuelProgressSlot() == null) return;
+
+        int slot = type.fuelProgressSlot();
+        ItemStack item = inventory.getItem(slot);
+        if (item == null) return;
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
+
+        int progress = 0;
+        if (maxFuelTimer > 0) {
+            progress = Math.toIntExact(Math.round((double) fuelTimer / maxFuelTimer * 100));
+        }
+
+        Integer bestKey = null;
+        for (Integer key : type.fuelProgressTextures().keySet()) {
+            if (key <= progress) {
+                if (bestKey == null || key > bestKey) {
+                    bestKey = key;
+                }
+            }
+        }
+
+        if (bestKey != null) {
+            ItemStack fuelProgressItem = DataMachines.getNexoItem(type.fuelProgressTextures().get(bestKey));
+
+            if (fuelProgressItem == null) return;
+
+            inventory.setItem(slot, fuelProgressItem);
+        }
+    }
+
     public void destroy() {
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack itemStack = inventory.getItem(i);
@@ -162,6 +213,5 @@ public class Machine {
                 location.getWorld().dropItemNaturally(location, itemStack);
             }
         }
-        inventory.clear();
     }
 }
