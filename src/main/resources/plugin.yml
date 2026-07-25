@@ -4,7 +4,7 @@ prefix: customMachines
 version: '$version'
 
 main: com.hishacorp.dataMachines.DataMachines
-api-version: '26.1.2'
+api-version: '26.2'
 load: POSTWORLD
 
 authors: [Hisha]
