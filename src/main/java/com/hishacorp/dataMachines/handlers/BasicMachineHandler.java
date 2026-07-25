@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static com.hishacorp.dataMachines.DataMachines.isItemMatch;
+
 public class BasicMachineHandler implements MachineHandler<MachineType> {
     private static final Logger log = LoggerFactory.getLogger(BasicMachineHandler.class);
 
@@ -70,7 +72,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         }
 
         for (String fuelId : fuelItems.keySet()) {
-            if (DataMachines.isItemMatch(item, fuelId)) {
+            if (isItemMatch(item, fuelId)) {
                 return true;
             }
         }
@@ -118,7 +120,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
                 
                 String fuelId = null;
                 for (Map.Entry<String, Integer> entry : fuelItems.entrySet()) {
-                    if (DataMachines.isItemMatch(itemCopy, entry.getKey())) {
+                    if (isItemMatch(itemCopy, entry.getKey())) {
                         fuelId = entry.getKey();
                         break;
                     }
@@ -138,7 +140,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
 
             for (int slot : type.inputSlots()) {
                 ItemStack item = inventory.getItem(slot);
-                if (item != null && DataMachines.isItemMatch(item, input.item())) {
+                if (item != null && isItemMatch(item, input.item())) {
                     if (item.getAmount() >= input.amount()) {
                         found = true;
                         break;
@@ -170,7 +172,7 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
         for (Recipe.ItemStackData input : recipe.inputs()) {
             for (int slot : type.inputSlots()) {
                 ItemStack item = inventory.getItem(slot);
-                if (item != null && DataMachines.isItemMatch(item, input.item())) {
+                if (item != null && isItemMatch(item, input.item())) {
                     if (item.getAmount() >= input.amount()) {
                         item.setAmount(item.getAmount() - input.amount());
                         break;
@@ -232,15 +234,16 @@ public class BasicMachineHandler implements MachineHandler<MachineType> {
                 for (int slot : type.outputSlots()) {
                     ItemStack current = inventory.getItem(slot);
 
-                    if (current == null || (current.getType() == itemStack.getType() && current.getAmount() + itemStack.getAmount() <= 64)) {
-                        if (current == null) {
-                            inventory.setItem(slot, itemStack);
-                        } else {
-                            current.setAmount(current.getAmount() + itemStack.getAmount());
-                        }
-                        placed = true;
-                        break;
+                    if (current == null) {
+                        inventory.setItem(slot, itemStack);
+                    } else if (current.isSimilar(itemStack) && current.getAmount() + itemStack.getAmount() <= current.getMaxStackSize()) {
+                        current.setAmount(current.getAmount() + itemStack.getAmount());
+                    } else {
+                        continue;
                     }
+
+                    placed = true;
+                    break;
                 }
 
                 if (!placed) {
