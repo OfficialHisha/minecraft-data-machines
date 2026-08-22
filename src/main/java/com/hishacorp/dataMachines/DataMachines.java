@@ -8,8 +8,10 @@ import com.hishacorp.dataMachines.handlers.BasicRecipeHandler;
 import com.hishacorp.dataMachines.listeners.ChunkListener;
 import com.hishacorp.dataMachines.listeners.InventoryListener;
 import com.hishacorp.dataMachines.listeners.NexoFurnitureListener;
+import com.hishacorp.dataMachines.tasks.MachineHopperTask;
 import com.nexomc.nexo.api.NexoItems;
 import com.nexomc.nexo.items.ItemBuilder;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,6 +25,8 @@ public final class DataMachines extends JavaPlugin {
     private static final Logger log = LoggerFactory.getLogger(DataMachines.class);
     private static DataMachines plugin;
     private MachineManager machineManager;
+
+    public static final TextColor COLOR_RED = TextColor.fromHexString("FF5555");
 
     @Override
     public void onEnable() {
@@ -55,6 +59,8 @@ public final class DataMachines extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
 
         // Start Tick Loop
+        new MachineHopperTask(this.machineManager).runTaskTimer(this, 20L, 20L);
+
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> this.machineManager.tick(), 1L, 1L);
 
         getLogger().info("DataMachines enabled successfully!");

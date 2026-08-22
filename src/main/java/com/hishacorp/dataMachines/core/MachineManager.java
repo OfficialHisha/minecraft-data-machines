@@ -26,7 +26,7 @@ public class MachineManager {
     public static final NamespacedKey KEY_UUID = new NamespacedKey("data-machines", "machine_uuid");
     public static final NamespacedKey KEY_TYPE = new NamespacedKey("data-machines", "machine_type");
     public static final NamespacedKey KEY_RECIPE = new NamespacedKey("data-machines", "active_recipe");
-    public static final NamespacedKey KEY_TIME = new NamespacedKey("data-machines", "remaining_time");
+    public static final NamespacedKey KEY_REMAINING_TIME = new NamespacedKey("data-machines", "remaining_time");
     public static final NamespacedKey KEY_FUEL_TIMER = new NamespacedKey("data-machines", "fuel_timer");
     public static final NamespacedKey KEY_MAX_FUEL_TIMER = new NamespacedKey("data-machines", "max_fuel_timer");
     public static final NamespacedKey KEY_INVENTORY = new NamespacedKey("data-machines", "inventory");
@@ -118,6 +118,10 @@ public class MachineManager {
         return configManager;
     }
 
+    public Collection<Machine> getActiveMachines() {
+        return activeMachines.values();
+    }
+
     public Machine getMachine(Location loc) {
         return activeMachines.get(loc);
     }
@@ -135,7 +139,7 @@ public class MachineManager {
             container.remove(KEY_RECIPE);
         }
         
-        container.set(KEY_TIME, PersistentDataType.INTEGER, machine.getRemainingTime());
+        container.set(KEY_REMAINING_TIME, PersistentDataType.INTEGER, machine.getRemainingTime());
         container.set(KEY_FUEL_TIMER, PersistentDataType.INTEGER, machine.getFuelTimer());
         container.set(KEY_MAX_FUEL_TIMER, PersistentDataType.INTEGER, machine.getMaxFuelTimer());
 
@@ -150,7 +154,7 @@ public class MachineManager {
         String typeId = container.get(KEY_TYPE, PersistentDataType.STRING);
         String recipeId = container.get(KEY_RECIPE, PersistentDataType.STRING);
         byte[] inventoryBytes = container.get(KEY_INVENTORY, PersistentDataType.BYTE_ARRAY);
-        int remainingTime = container.getOrDefault(KEY_TIME, PersistentDataType.INTEGER, 0);
+        int remainingTime = container.getOrDefault(KEY_REMAINING_TIME, PersistentDataType.INTEGER, 0);
         int fuelTimer = container.getOrDefault(KEY_FUEL_TIMER, PersistentDataType.INTEGER, 0);
         int maxFuelTimer = container.getOrDefault(KEY_MAX_FUEL_TIMER, PersistentDataType.INTEGER, 0);
 

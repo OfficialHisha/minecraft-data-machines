@@ -1,5 +1,6 @@
 package com.hishacorp.dataMachines.listeners;
 
+import com.hishacorp.dataMachines.DataMachines;
 import com.hishacorp.dataMachines.core.Machine;
 import com.hishacorp.dataMachines.core.MachineManager;
 import com.hishacorp.dataMachines.guards.GriefPreventionGuard;
@@ -8,6 +9,7 @@ import com.nexomc.nexo.api.events.furniture.NexoFurnitureInteractEvent;
 import com.nexomc.nexo.api.events.furniture.NexoFurniturePlaceEvent;
 import com.nexomc.nexo.mechanics.furniture.FurnitureMechanic;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -57,13 +59,13 @@ public class NexoFurnitureListener implements Listener {
         if (machine == null) return;
 
         if (!GriefPreventionGuard.canInteract(event.getPlayer(), loc)) {
-            event.getPlayer().sendMessage(Component.text("You do not have permission to use this machine in this claim."));
+            event.getPlayer().sendMessage(Component.text("You do not have permission to use this machine in this claim.").color(DataMachines.COLOR_RED));
             return;
         }
 
         String permission = machine.getType().properties().requiresPermission();
         if (permission != null && !permission.isEmpty() && !event.getPlayer().hasPermission(permission)) {
-            event.getPlayer().sendMessage(Component.text("You are not able to use this machine."));
+            event.getPlayer().sendMessage(Component.text("You are not able to use this machine.").color(DataMachines.COLOR_RED));
             return;
         }
 

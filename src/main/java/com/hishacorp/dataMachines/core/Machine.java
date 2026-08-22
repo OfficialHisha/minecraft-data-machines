@@ -13,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.UUID;
 
 import java.util.List;
@@ -213,5 +214,72 @@ public class Machine {
                 location.getWorld().dropItemNaturally(location, itemStack);
             }
         }
+    }
+
+    public boolean tryInsert(Inventory source, ItemStack item, List<Integer> slots) {
+        if (slots == null || slots.isEmpty()) return false;
+
+        // Find the item in the source (hopper)
+        int sourceSlot = -1;
+        for (int i = 0; i < source.getSize(); i++) {
+            ItemStack stack = source.getItem(i);
+            if (stack != null && stack.isSimilar(item)) {
+                sourceSlot = i;
+                break;
+            }
+        }
+
+        if (sourceSlot == -1) return false;
+
+        ItemStack sourceStack = source.getItem(sourceSlot).clone();
+        int amountToMove = sourceStack.getAmount();
+
+        // Try to find space in destination slots
+        int moved = 0;
+        for (int slot : slots) {
+            ItemStack destStack = inventory.getItem(slot);
+            int space = 0;
+            if (destStack == null || destStack.getType().isAir()) {
+                space = item.getMaxStackSize();
+            } else if (destStack.isSimilar(item)) {
+                space = destStack.getMaxStackSize() - destStack.getAmount();
+            }
+
+            if (space > 0) {
+                int toAdd = Math.min(space, amountToMove - moved);
+                if (destStack == null || destStack.getType().isAir()) {
+                    ItemStack newStack = item.clone();
+                    newStack.setAmount(toAdd);
+                    inventory.setItem(slot, newStack);
+                } else {
+                    destStack.setAmount(destStack.getAmount() + toAdd);
+                }
+                moved += toAdd;
+            }
+            if (moved >= amountToMove) break;
+        }
+
+        if (moved > 0) {
+            ItemStack remaining = source.getItem(sourceSlot);
+            if (remaining != null) {
+                if (remaining.getAmount() <= moved) {
+                    source.setItem(sourceSlot, null);
+                } else {
+                    remaining.setAmount(remaining.getAmount() - moved);
+                }
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isFuelItem(ItemStack item) {
+        Map<String, Integer> fuelItems = type.properties().fuelItems();
+        if (fuelItems == null || fuelItems.isEmpty()) return true;
+        for (String fuelId : fuelItems.keySet()) {
+            if (DataMachines.isItemMatch(item, fuelId)) return true;
+        }
+        return false;
     }
 }
