@@ -7,6 +7,10 @@ main: com.hishacorp.dataMachines.DataMachines
 api-version: '26.2'
 load: POSTWORLD
 
+softdepend:
+  - Nexo
+  - GriefPrevention
+
 authors: [Hisha]
 
 commands:
