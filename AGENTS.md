@@ -73,6 +73,7 @@ Whenever a new feature or machine is requested:
 3. **Verify**: Ensure the data and code are in sync.
 
 ### 2. Implementation Strategy
+- **JetBrains MCP**: Prefer using the JetBrains MCP over bash where applicable.
 - **Modular Logic Handlers**: Do not use giant switch statements in the main plugin class. Create a dedicated `Handler` for each logic type.
 - **Nexo Integration**: Research the Nexo "Furniture Mechanic" to ensure blocks are placed and interact with the laway the intended.
 - **Concurrency**: Minimize main thread impact. Use async tasks for data loading and non-blocking operations.

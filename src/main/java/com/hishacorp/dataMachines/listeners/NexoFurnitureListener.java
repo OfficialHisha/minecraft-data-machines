@@ -2,6 +2,7 @@ package com.hishacorp.dataMachines.listeners;
 
 import com.hishacorp.dataMachines.core.Machine;
 import com.hishacorp.dataMachines.core.MachineManager;
+import com.hishacorp.dataMachines.guards.GriefPreventionGuard;
 import com.nexomc.nexo.api.events.furniture.NexoFurnitureBreakEvent;
 import com.nexomc.nexo.api.events.furniture.NexoFurnitureInteractEvent;
 import com.nexomc.nexo.api.events.furniture.NexoFurniturePlaceEvent;
@@ -54,6 +55,11 @@ public class NexoFurnitureListener implements Listener {
         Machine machine = machineManager.getMachine(loc);
         
         if (machine == null) return;
+
+        if (!GriefPreventionGuard.canInteract(event.getPlayer(), loc)) {
+            event.getPlayer().sendMessage(Component.text("You do not have permission to use this machine in this claim."));
+            return;
+        }
 
         String permission = machine.getType().properties().requiresPermission();
         if (permission != null && !permission.isEmpty() && !event.getPlayer().hasPermission(permission)) {
